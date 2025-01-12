@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Disease Detection System</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #EDE8F5; /* Lightest color from the palette */
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            color: #333;
+            position: relative;
+        }
+        .container {
+            width: 70%;
+            max-width: 600px;
+            padding: 30px;
+            background: #ADBBDA; /* Soft background color */
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            color: #333;
+            text-align: center;
+            position: relative;
+        }
+        h1 {
+            color: #3D52A0; /* Darkest color for headings */
+            margin-bottom: 20px;
+        }
+        form {
+            margin-bottom: 20px;
+        }
+        label {
+            font-size: 1.2em;
+            margin-bottom: 10px;
+            display: block;
+            color: #7091E6; /* Medium blue for labels */
+        }
+        textarea {
+            width: 100%;
+            padding: 15px;
+            border-radius: 10px;
+            border: 1px solid #8697C4; /* Border color */
+            font-size: 1em;
+            box-sizing: border-box;
+        }
+        button {
+            padding: 12px 20px;
+            background: linear-gradient(to right, #7091E6, #3D52A0); /* Gradient with the darker blues */
+            color: #fff;
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: bold;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 20px rgba(57, 81, 160, 0.5); /* Shadow in the darker tone */
+        }
+        .result {
+            margin-top: 20px;
+            text-align: center;
+        }
+        .bubble {
+            background: #8697C4; /* Secondary blue for result bubbles */
+            color: #fff;
+            font-size: 1.5em;
+            padding: 20px;
+            border-radius: 30px;
+            margin: 20px auto;
+            max-width: 80%;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        .medicine-box {
+            display: inline-block;
+            background: #ADBBDA; /* Match container color */
+            color: #3D52A0; /* Text in darker blue */
+            padding: 10px 15px;
+            margin: 10px;
+            border-radius: 10px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.15);
+            font-weight: bold;
+        }
+        .advice {
+            margin-top: 20px;
+            background: #7091E6; /* Advice section with lighter blue */
+            color: #fff;
+            padding: 15px;
+            border-radius: 10px;
+            font-style: italic;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.15);
+        }
+        /* Image Styles */
+        .corner-image {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            width: 150px; /* Adjust size */
+            height: auto;
+            opacity: 0.8;
+        }
+        .top-left {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            width: 150px; /* Adjust size */
+            height: auto;
+            opacity: 0.8;
+        }
+        .bottom-left {
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            width: 150px; /* Adjust size */
+            height: auto;
+            opacity: 0.8;
+        }
+        .top-center {
+            position: absolute;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 150px; /* Adjust size */
+            height: auto;
+            opacity: 0.8;
+        }
+        .top-right {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            width: 150px; /* Adjust size */
+            height: auto;
+            opacity: 0.8;
+        }
+    </style>
+</head>
+<body>
+    <img src="static/image2.png" alt="Top Left Image" class="top-left">
+    <img src="static/image3.png" alt="Bottom Left Image" class="bottom-left">
+    <img src="static/image5.png" alt="Top Right Image" class="top-right">
+    <div class="container">
+        <h1>Disease Detection System</h1>
+        <form id="diseaseForm">
+            <label for="symptoms">What is the problem:</label>
+            <textarea id="symptoms" name="symptoms" rows="6" placeholder="Describe your symptoms here..."></textarea>
+            <button type="button" onclick="predictDisease()">Predict</button>
+        </form>
+        <div class="result" id="result"></div>
+    </div>
+    <img src="static/image2.png" alt="Decorative Image" class="corner-image">
+    <script>
+        function predictDisease() {
+            const symptoms = document.getElementById('symptoms').value;
+            fetch('/predict', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ text: symptoms })
+            })
+            .then(response => response.json())
+            .then(data => {
+                const resultDiv = document.getElementById('result');
+                resultDiv.innerHTML = `
+                    <div class="bubble">Prediction: ${data.prediction}</div>
+                    <div>
+                        ${data.medicines.map(med => `<span class="medicine-box">${med}</span>`).join('')}
+                    </div>
+                    <div class="advice">Doctor's Advice: ${data.advice}</div>
+                `;
+            })
+            .catch(error => console.error('Error:', error));
+        }
+    </script>
+</body>
+</html>
